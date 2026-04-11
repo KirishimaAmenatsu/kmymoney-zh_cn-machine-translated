@@ -1,0 +1,100 @@
+name: CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  kf5-leap:
+    runs-on: ubuntu-latest
+    container:
+      image: rhabacker/suse_leap_kf5_qt515
+      options: --privileged
+    env:
+      ci_variant: kf5
+      ci_host: native
+      ci_parallel: 4
+      ci_sudo: yes
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: ./tools/ci-install.sh
+
+      - name: Build and test
+        run: ./tools/ci-build.sh
+
+  kf6-leap:
+    runs-on: ubuntu-latest
+    container:
+      image: rhabacker/suse_leap_16_kf6_qt6
+      options: --privileged
+    env:
+      ci_variant: kf6
+      ci_host: native
+      ci_parallel: 4
+      ci_sudo: yes
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: ./tools/ci-install.sh
+
+      - name: Build and test
+        run: ./tools/ci-build.sh
+
+  ubuntu-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            extra-cmake-modules \
+            build-essential \
+            qt5-qmake \
+            qtbase5-dev \
+            qttools5-dev \
+            libkf5config-dev \
+            libkf5coreaddons-dev \
+            libkf5widgetsaddons-dev \
+            libkf5i18n-dev \
+            libkf5xmlgui-dev \
+            libkf5kio-dev \
+            libkf5notifications-dev \
+            libkf5itemmodels-dev \
+            libkf5itemviews-dev \
+            libkf5service-dev \
+            libkf5textwidgets-dev \
+            libkf5completion-dev \
+            libkf5kcmutils-dev \
+            libkf5crash-dev \
+            libkf5activities-dev \
+            libalkimia-dev \
+            libqtkeychain-dev \
+            libsqlcipher-dev \
+            pkg-config
+          sudo apt-get build-dep -y kmymoney 2>/dev/null || true
+
+      - name: Configure
+        run: |
+          mkdir build
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
+
+      - name: Build
+        run: |
+          cd build
+          cmake --build . -j4
+
+      - name: Test
+        run: |
+          cd build
+          ctest -VV -j4
