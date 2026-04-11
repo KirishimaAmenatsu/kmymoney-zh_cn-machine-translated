@@ -16,7 +16,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo sed -i -- 's/#[ ]*deb-src/deb-src/g' /etc/apt/sources.list`
+          sudo sed -i -- 's/#[ ]*deb-src/deb-src/g' /etc/apt/sources.list
           sudo apt-get update
           sudo apt-get build-dep -y kmymoney
           sudo apt-get install qt5-default libsqlcipher-dev libqt5sql5-* breeze-icon-theme
