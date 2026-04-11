@@ -56,7 +56,31 @@ jobs:
     - name: Configure CMake
       run: |
         sudo apt-get update
-        sudo apt-get install -y extra-cmake-modules build-essential
+        sudo apt-get install -y \
+        extra-cmake-modules \
+        build-essential \
+        qt5-qmake \
+        qtbase5-dev \
+        qttools5-dev \
+        libkf5config-dev \
+        libkf5coreaddons-dev \
+        libkf5widgetsaddons-dev \
+        libkf5i18n-dev \
+        libkf5xmlgui-dev \
+        libkf5kio-dev \
+        libkf5notifications-dev \
+        libkf5itemmodels-dev \
+        libkf5itemviews-dev \
+        libkf5service-dev \
+        libkf5textwidgets-dev \
+        libkf5completion-dev \
+        libkf5kcmutils-dev \
+        libkf5crash-dev \
+        libkf5activities-dev \
+        libalkimia-dev \
+        libqtkeychain-dev \
+        libsqlcipher-dev \
+        pkg-config
         sudo apt-get build-dep -y kmymoney 2>/dev/null || true
         cmake -B ${{ steps.strings.outputs.build-output-dir }} \
           -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} \
