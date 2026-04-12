@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+
+  ubuntu-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          printf '%s' '
+          deb http://azure.archive.ubuntu.com/ubuntu noble main restricted universe multiverse
+          deb-src http://azure.archive.ubuntu.com/ubuntu noble main restricted universe multiverse
+          deb http://azure.archive.ubuntu.com/ubuntu noble-updates main restricted universe multiverse
+          deb-src http://azure.archive.ubuntu.com/ubuntu noble-updates main restricted universe multiverse
+          deb http://azure.archive.ubuntu.com/ubuntu noble-backports main restricted universe multiverse
+          deb-src http://azure.archive.ubuntu.com/ubuntu noble-backports main restricted universe multiverse
+
+          ' | sudo tee /etc/apt/sources.list
+          sudo apt-get update
+          sudo apt-get build-dep -y kmymoney
+          sudo apt-get install qt5-* qt6-* libsqlcipher-dev libqt5sql5* libqt6sql6* breeze-icon-theme qt5keychain-dev libqt6keychain1
+          
+
+      - name: Configure
+        run: |
+          mkdir build
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
+
+      - name: Build
+        run: |
+          cd build
+          cmake --build . -j4
+
+      - name: Test
+        run: |
+          cd build
+          ctest -VV -j4
