@@ -27,7 +27,7 @@ jobs:
           ' | sudo tee /etc/apt/sources.list
           sudo apt-get update
           sudo apt-get build-dep -y kmymoney
-          sudo apt-get install qt5-* qt6-* libsqlcipher-dev libqt5sql5* libqt6sql6* breeze-icon-theme
+          sudo apt-get install qt5-* qt6-* libsqlcipher-dev libqt5sql5* libqt6sql6* breeze-icon-theme qt5keychain-dev libqt6keychain1
           
 
       - name: Configure
